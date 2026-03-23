@@ -6,7 +6,7 @@ import PageLoader from './components/PageLoader'
 
 // Lazy load pages for code splitting
 const Home          = lazy(() => import('./pages/Home'))
-const Jobs          = lazy(() => import('./pages/jobs'))
+const Jobs          = lazy(() => import('./pages/Jobs'))
 const SubmitResume  = lazy(() => import('./pages/SubmitResume'))
 const About         = lazy(() => import('./pages/About'))
 const Contact       = lazy(() => import('./pages/Contact'))
