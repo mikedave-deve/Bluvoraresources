@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import JobCard from "../components/JobCard";
-import { JOBS, CATEGORIES, TYPES, LOCATIONS } from "../data/Jobs";
+import { JOBS, CATEGORIES, TYPES, LOCATIONS } from "../data/jobs";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -247,7 +247,7 @@ export default function Jobs() {
           ) : (
             /* Empty state */
             <div className="text-center py-24">
-              <div className="text-5xl mb-4">🔍</div>
+              <div className="text-5xl mb-4"></div>
               <h3 className="font-display font-bold text-2xl text-ink mb-2">
                 No jobs found
               </h3>
