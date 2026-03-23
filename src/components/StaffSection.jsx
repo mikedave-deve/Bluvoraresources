@@ -20,8 +20,8 @@ const STAFF = [
     linkedin:    '#',
   },
   {
-    name:        'Priya Sharma',
-    title:       'Director of Client Relations',
+    name:        'ROBERT LINDERMAN',
+    title:       'SUPERVISOR',
     description: 'Priya ensures every client partnership exceeds expectations, managing relationships with over 200 leading organizations across diverse industries.',
     image:       SUPERVISOR,
     linkedin:    '#',
