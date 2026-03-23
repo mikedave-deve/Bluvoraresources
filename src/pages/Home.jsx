@@ -1,116 +1,125 @@
-import { useEffect, useRef, useState, lazy, Suspense } from 'react'
-import { Link } from 'react-router-dom'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import StatsCounter from '../components/StatsCounter'
-import StaffSection from '../components/StaffSection'
-import JobCard from '../components/JobCard'
-import { JOBS } from '../data/jobs'
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
+import { Link } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import StatsCounter from "../components/StatsCounter";
+import StaffSection from "../components/StaffSection";
+import JobCard from "../components/JobCard";
+import { JOBS } from "../Data/jobs";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 /* ── Hero carousel data ─────────────────────────────────────── */
 const SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=85',
-    headline: 'Find Your Next Great Opportunity',
-    sub: 'We connect ambitious professionals with industry-leading companies.',
-    cta1: { label: 'Browse Jobs',     to: '/jobs' },
-    cta2: { label: 'Submit Resume',   to: '/submit-resume' },
+    image:
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=85",
+    headline: "Find Your Next Great Opportunity",
+    sub: "We connect ambitious professionals with industry-leading companies.",
+    cta1: { label: "Browse Jobs", to: "/jobs" },
+    cta2: { label: "Submit Resume", to: "/submit-resume" },
   },
   {
-    image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=85',
-    headline: 'Talent That Drives Results',
-    sub: 'Our expert recruiters match the right candidates to the right roles — fast.',
-    cta1: { label: 'Hire Talent',     to: '/#contact' },
-    cta2: { label: 'Learn More',      to: '/about' },
+    image:
+      "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=85",
+    headline: "Talent That Drives Results",
+    sub: "Our expert recruiters match the right candidates to the right roles — fast.",
+    cta1: { label: "Hire Talent", to: "/#contact" },
+    cta2: { label: "Learn More", to: "/about" },
   },
   {
-    image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=85',
-    headline: 'Careers Built on Expertise',
-    sub: '25+ years of staffing excellence across industries nationwide.',
-    cta1: { label: 'Our Story',       to: '/about' },
-    cta2: { label: 'View Openings',   to: '/jobs' },
+    image:
+      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1600&q=85",
+    headline: "Careers Built on Expertise",
+    sub: "25+ years of staffing excellence across industries nationwide.",
+    cta1: { label: "Our Story", to: "/about" },
+    cta2: { label: "View Openings", to: "/jobs" },
   },
-]
+];
 
 /* ── Services ───────────────────────────────────────────────── */
 const SERVICES = [
   {
-    icon: '',
-    title: 'Direct Placement',
-    desc:  'Permanent placement solutions matching top candidates with full-time roles at leading organizations.',
+    icon: "",
+    title: "Direct Placement",
+    desc: "Permanent placement solutions matching top candidates with full-time roles at leading organizations.",
   },
   {
-    icon: '',
-    title: 'Contract Staffing',
-    desc:  'Flexible contract and temp-to-hire arrangements to scale your workforce on demand.',
+    icon: "",
+    title: "Contract Staffing",
+    desc: "Flexible contract and temp-to-hire arrangements to scale your workforce on demand.",
   },
   {
-    icon: '',
-    title: 'Executive Search',
-    desc:  'Confidential C-suite and VP-level recruitment for mission-critical leadership positions.',
+    icon: "",
+    title: "Executive Search",
+    desc: "Confidential C-suite and VP-level recruitment for mission-critical leadership positions.",
   },
   {
-    icon: '',
-    title: 'RPO Services',
-    desc:  'End-to-end recruitment process outsourcing to optimize your talent acquisition at scale.',
+    icon: "",
+    title: "RPO Services",
+    desc: "End-to-end recruitment process outsourcing to optimize your talent acquisition at scale.",
   },
-]
+];
 
 /* ═══════════════════════════════════════════════════════════════
    HeroCarousel
 ═══════════════════════════════════════════════════════════════ */
 function HeroCarousel() {
-  const [current, setCurrent] = useState(0)
-  const [prev,    setPrev]    = useState(null)
-  const headRef   = useRef(null)
-  const subRef    = useRef(null)
-  const ctaRef    = useRef(null)
-  const autoRef   = useRef(null)
+  const [current, setCurrent] = useState(0);
+  const [prev, setPrev] = useState(null);
+  const headRef = useRef(null);
+  const subRef = useRef(null);
+  const ctaRef = useRef(null);
+  const autoRef = useRef(null);
 
   /* Auto-advance every 5s */
   useEffect(() => {
     autoRef.current = setInterval(() => {
-      setCurrent(c => {
-        setPrev(c)
-        return (c + 1) % SLIDES.length
-      })
-    }, 5000)
-    return () => clearInterval(autoRef.current)
-  }, [])
+      setCurrent((c) => {
+        setPrev(c);
+        return (c + 1) % SLIDES.length;
+      });
+    }, 5000);
+    return () => clearInterval(autoRef.current);
+  }, []);
 
   /* Text entrance animation on slide change */
   useEffect(() => {
-    const tl = gsap.timeline()
+    const tl = gsap.timeline();
     tl.fromTo(
       [headRef.current, subRef.current, ctaRef.current],
       { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.85, stagger: 0.12, ease: 'power3.out' }
-    )
-    return () => tl.kill()
-  }, [current])
+      { y: 0, opacity: 1, duration: 0.85, stagger: 0.12, ease: "power3.out" },
+    );
+    return () => tl.kill();
+  }, [current]);
 
   function goTo(idx) {
-    clearInterval(autoRef.current)
-    setPrev(current)
-    setCurrent(idx)
+    clearInterval(autoRef.current);
+    setPrev(current);
+    setCurrent(idx);
   }
 
   return (
-    <section className="relative min-h-screen overflow-hidden" style={{ minHeight: 'calc(100svh)' }}>
+    <section
+      className="relative min-h-screen overflow-hidden"
+      style={{ minHeight: "calc(100svh)" }}
+    >
       {/* Slides */}
       {SLIDES.map((slide, i) => (
         <div
           key={i}
           className="absolute inset-0 transition-opacity duration-1000"
-          style={{ opacity: i === current ? 1 : 0, zIndex: i === current ? 2 : 1 }}
+          style={{
+            opacity: i === current ? 1 : 0,
+            zIndex: i === current ? 2 : 1,
+          }}
         >
           <img
             src={slide.image}
             alt=""
             className="w-full h-full object-cover"
-            loading={i === 0 ? 'eager' : 'lazy'}
+            loading={i === 0 ? "eager" : "lazy"}
           />
           {/* Centered overlay — darker center-bottom for legibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-brand-950/60 via-brand-950/65 to-brand-950/80" />
@@ -121,11 +130,12 @@ function HeroCarousel() {
       <div className="relative z-10 min-h-screen flex items-center justify-center py-32">
         <div className="section-container">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-
             {/* Eyebrow pill */}
-            <span className="inline-block text-xs font-semibold tracking-[0.22em] uppercase
+            <span
+              className="inline-block text-xs font-semibold tracking-[0.22em] uppercase
                              text-brand-300 mb-7 border border-brand-400/40 rounded-full px-5 py-2
-                             font-body">
+                             font-body"
+            >
               Premier Staffing &amp; Recruitment
             </span>
 
@@ -133,7 +143,7 @@ function HeroCarousel() {
             <h1
               ref={headRef}
               className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-7"
-              style={{ lineHeight: '1.06', letterSpacing: '-0.025em' }}
+              style={{ lineHeight: "1.06", letterSpacing: "-0.025em" }}
             >
               {SLIDES[current].headline}
             </h1>
@@ -142,18 +152,24 @@ function HeroCarousel() {
             <p
               ref={subRef}
               className="text-lg sm:text-xl text-white/75 mb-11 max-w-xl mx-auto"
-              style={{ lineHeight: '1.7', letterSpacing: '-0.005em' }}
+              style={{ lineHeight: "1.7", letterSpacing: "-0.005em" }}
             >
               {SLIDES[current].sub}
             </p>
 
             {/* CTAs — centered row */}
             <div ref={ctaRef} className="flex flex-wrap justify-center gap-4">
-              <Link to={SLIDES[current].cta1.to} className="btn-primary px-9 py-4 text-base">
+              <Link
+                to={SLIDES[current].cta1.to}
+                className="btn-primary px-9 py-4 text-base"
+              >
                 {SLIDES[current].cta1.label}
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link to={SLIDES[current].cta2.to} className="btn-white px-9 py-4 text-base">
+              <Link
+                to={SLIDES[current].cta2.to}
+                className="btn-white px-9 py-4 text-base"
+              >
                 {SLIDES[current].cta2.label}
               </Link>
             </div>
@@ -170,8 +186,8 @@ function HeroCarousel() {
             aria-label={`Slide ${i + 1}`}
             className={`rounded-full transition-all duration-300 ${
               i === current
-                ? 'w-8 h-2 bg-white'
-                : 'w-2 h-2 bg-white/40 hover:bg-white/70'
+                ? "w-8 h-2 bg-white"
+                : "w-2 h-2 bg-white/40 hover:bg-white/70"
             }`}
           />
         ))}
@@ -179,35 +195,40 @@ function HeroCarousel() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-9 right-10 z-10 hidden lg:flex flex-col items-center gap-2">
-        <span className="text-xs text-white/40 tracking-widest uppercase rotate-90 origin-center font-body">Scroll</span>
+        <span className="text-xs text-white/40 tracking-widest uppercase rotate-90 origin-center font-body">
+          Scroll
+        </span>
         <div className="w-px h-10 bg-white/20 relative overflow-hidden">
           <div className="absolute inset-0 bg-white/60 animate-[slideDown_1.6s_ease-in-out_infinite]" />
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════
    ServicesSection
 ═══════════════════════════════════════════════════════════════ */
 function ServicesSection() {
-  const ref = useRef(null)
+  const ref = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.service-card',
+        ".service-card",
         { y: 50, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.6, stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true },
-        }
-      )
-    }, ref)
-    return () => ctx.revert()
-  }, [])
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ref.current, start: "top 80%", once: true },
+        },
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={ref} className="section-padding">
@@ -217,7 +238,7 @@ function ServicesSection() {
           <div>
             <span className="section-eyebrow">What We Do</span>
             <h2 className="section-title mt-1 mb-5">
-              Staffing Solutions{' '}
+              Staffing Solutions{" "}
               <span className="text-gradient-blue">Built for You</span>
             </h2>
             <p className="section-subtitle mb-8">
@@ -238,8 +259,10 @@ function ServicesSection() {
                 className="service-card card p-6 group cursor-default"
               >
                 <div className="text-3xl mb-4">{icon}</div>
-                <h3 className="font-display font-bold text-lg text-ink mb-2
-                               group-hover:text-brand-700 transition-colors duration-200">
+                <h3
+                  className="font-display font-bold text-lg text-ink mb-2
+                               group-hover:text-brand-700 transition-colors duration-200"
+                >
                   {title}
                 </h3>
                 <p className="text-sm text-ink-muted leading-relaxed">{desc}</p>
@@ -249,30 +272,33 @@ function ServicesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════
    FeaturedJobs
 ═══════════════════════════════════════════════════════════════ */
 function FeaturedJobs() {
-  const ref  = useRef(null)
-  const featured = JOBS.filter(j => j.featured)
+  const ref = useRef(null);
+  const featured = JOBS.filter((j) => j.featured);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.featured-job-card',
+        ".featured-job-card",
         { y: 40, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.65, stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true },
-        }
-      )
-    }, ref)
-    return () => ctx.revert()
-  }, [])
+          y: 0,
+          opacity: 1,
+          duration: 0.65,
+          stagger: 0.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ref.current, start: "top 80%", once: true },
+        },
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={ref} className="section-padding bg-surface-soft">
@@ -288,7 +314,7 @@ function FeaturedJobs() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featured.map(job => (
+          {featured.map((job) => (
             <div key={job.id} className="featured-job-card">
               <JobCard job={job} featured />
             </div>
@@ -296,36 +322,43 @@ function FeaturedJobs() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════
    AboutBanner
 ═══════════════════════════════════════════════════════════════ */
 function AboutBanner() {
-  const ref = useRef(null)
+  const ref = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.about-content',
+        ".about-content",
         { x: -40, opacity: 0 },
         {
-          x: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
-          scrollTrigger: { trigger: ref.current, start: 'top 75%', once: true },
-        }
-      )
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ref.current, start: "top 75%", once: true },
+        },
+      );
       gsap.fromTo(
-        '.about-image',
+        ".about-image",
         { x: 40, opacity: 0 },
         {
-          x: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.1,
-          scrollTrigger: { trigger: ref.current, start: 'top 75%', once: true },
-        }
-      )
-    }, ref)
-    return () => ctx.revert()
-  }, [])
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: 0.1,
+          scrollTrigger: { trigger: ref.current, start: "top 75%", once: true },
+        },
+      );
+    }, ref);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={ref} className="section-padding">
@@ -335,19 +368,19 @@ function AboutBanner() {
           <div className="about-content">
             <span className="section-eyebrow">About Bluvora</span>
             <h2 className="section-title mt-1 mb-5">
-              A Partner You Can{' '}
+              A Partner You Can{" "}
               <span className="text-gradient-blue">Count On</span>
             </h2>
             <p className="text-ink-muted leading-relaxed mb-5">
-              Founded in 1999, Bluvora Resources has grown from a boutique staffing
-              firm into one of America's most trusted recruitment partners. We
-              operate across technology, finance, healthcare, and operations — with a
-              singular focus on quality over quantity.
+              Founded in 1999, Bluvora Resources has grown from a boutique
+              staffing firm into one of America's most trusted recruitment
+              partners. We operate across technology, finance, healthcare, and
+              operations — with a singular focus on quality over quantity.
             </p>
             <p className="text-ink-muted leading-relaxed mb-8">
-              Our team of 120+ specialized recruiters bring deep industry knowledge
-              and a personal touch to every search. We don't just fill seats — we
-              build careers and strengthen organizations.
+              Our team of 120+ specialized recruiters bring deep industry
+              knowledge and a personal touch to every search. We don't just fill
+              seats — we build careers and strengthen organizations.
             </p>
             <div className="divider" />
             <Link to="/about" className="btn-primary">
@@ -385,16 +418,20 @@ function AboutBanner() {
             </div>
 
             {/* Floating badge */}
-            <div className="absolute -bottom-4 left-6 bg-brand-700 text-white
-                            rounded-2xl px-5 py-4 shadow-blue-glow">
-              <p className="font-display font-bold text-3xl leading-none">25+</p>
+            <div
+              className="absolute -bottom-4 left-6 bg-brand-700 text-white
+                            rounded-2xl px-5 py-4 shadow-blue-glow"
+            >
+              <p className="font-display font-bold text-3xl leading-none">
+                25+
+              </p>
               <p className="text-xs text-brand-200 mt-1">Years of Excellence</p>
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -412,8 +449,8 @@ function CTABanner() {
           Ready to Take the Next Step?
         </h2>
         <p className="text-brand-200 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-          Whether you're searching for top talent or your dream career, our team is
-          here to guide you every step of the way.
+          Whether you're searching for top talent or your dream career, our team
+          is here to guide you every step of the way.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <Link to="/jobs" className="btn-white px-8 py-4 text-base">
@@ -430,7 +467,7 @@ function CTABanner() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -438,94 +475,115 @@ function CTABanner() {
 ═══════════════════════════════════════════════════════════════ */
 const TESTIMONIALS = [
   {
-    quote: 'Bluvora placed me in my dream role within three weeks. Their team took the time to truly understand what I was looking for — not just the job title, but the culture and growth potential.',
-    name:  'Danielle Okafor',
-    title: 'Senior Product Manager, Nexlify Corp',
-    initials: 'DO',
+    quote:
+      "Bluvora placed me in my dream role within three weeks. Their team took the time to truly understand what I was looking for — not just the job title, but the culture and growth potential.",
+    name: "Danielle Okafor",
+    title: "Senior Product Manager, Nexlify Corp",
+    initials: "DO",
   },
   {
-    quote: "As a hiring manager, I’ve worked with many staffing firms. Bluvora stands apart — every candidate they sent was genuinely qualified and culturally aligned. We hired three through them in one quarter.",
-    name:  'James Whitfield',
-    title: 'VP of Engineering, BuildCo Infrastructure',
-    initials: 'JW',
+    quote:
+      "As a hiring manager, I’ve worked with many staffing firms. Bluvora stands apart — every candidate they sent was genuinely qualified and culturally aligned. We hired three through them in one quarter.",
+    name: "James Whitfield",
+    title: "VP of Engineering, BuildCo Infrastructure",
+    initials: "JW",
   },
   {
-    quote: 'I was nervous about changing industries. The recruiter at Bluvora guided me through every step, coached me for interviews, and negotiated a salary 20% above what I expected.',
-    name:  'Sofia Reyes',
-    title: 'Financial Analyst, Summit Capital Group',
-    initials: 'SR',
+    quote:
+      "I was nervous about changing industries. The recruiter at Bluvora guided me through every step, coached me for interviews, and negotiated a salary 20% above what I expected.",
+    name: "Sofia Reyes",
+    title: "Financial Analyst, Summit Capital Group",
+    initials: "SR",
   },
   {
-    quote: 'The team is incredibly responsive and professional. They filled a critical ICU nursing role in under two weeks during our busiest season. We now use Bluvora exclusively.',
-    name:  'Dr. Marcus Webb',
-    title: 'Chief Nursing Officer, Greenfield Medical Center',
-    initials: 'MW',
+    quote:
+      "The team is incredibly responsive and professional. They filled a critical ICU nursing role in under two weeks during our busiest season. We now use Bluvora exclusively.",
+    name: "Dr. Marcus Webb",
+    title: "Chief Nursing Officer, Greenfield Medical Center",
+    initials: "MW",
   },
   {
-    quote: 'What sets Bluvora apart is the personal attention. I never felt like a number — they remembered details from our first call months later and kept checking in even after my placement.',
-    name:  'Priya Anand',
-    title: 'Marketing Director, BrightEdge Media',
-    initials: 'PA',
+    quote:
+      "What sets Bluvora apart is the personal attention. I never felt like a number — they remembered details from our first call months later and kept checking in even after my placement.",
+    name: "Priya Anand",
+    title: "Marketing Director, BrightEdge Media",
+    initials: "PA",
   },
-]
+];
 
 function TestimonialsSection() {
-  const [current, setCurrent] = useState(0)
-  const [animating, setAnimating] = useState(false)
-  const slideRef  = useRef(null)
-  const autoRef   = useRef(null)
-  const sectionRef = useRef(null)
+  const [current, setCurrent] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const slideRef = useRef(null);
+  const autoRef = useRef(null);
+  const sectionRef = useRef(null);
 
   /* Auto-advance every 5s */
   useEffect(() => {
-    autoRef.current = setInterval(() => advance(1), 5500)
-    return () => clearInterval(autoRef.current)
-  }, [current])
+    autoRef.current = setInterval(() => advance(1), 5500);
+    return () => clearInterval(autoRef.current);
+  }, [current]);
 
   /* Section entrance */
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.testimonial-header',
+        ".testimonial-header",
         { y: 30, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
-          scrollTrigger: { trigger: sectionRef.current, start: 'top 80%', once: true },
-        }
-      )
-    }, sectionRef)
-    return () => ctx.revert()
-  }, [])
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        },
+      );
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
 
   function animateSlide(dir, nextIdx) {
-    if (animating || !slideRef.current) return
-    setAnimating(true)
+    if (animating || !slideRef.current) return;
+    setAnimating(true);
     gsap.to(slideRef.current, {
-      opacity: 0, x: dir * -40, duration: 0.3, ease: 'power2.in',
+      opacity: 0,
+      x: dir * -40,
+      duration: 0.3,
+      ease: "power2.in",
       onComplete: () => {
-        setCurrent(nextIdx)
+        setCurrent(nextIdx);
         gsap.fromTo(
           slideRef.current,
           { opacity: 0, x: dir * 40 },
           {
-            opacity: 1, x: 0, duration: 0.45, ease: 'power3.out',
+            opacity: 1,
+            x: 0,
+            duration: 0.45,
+            ease: "power3.out",
             onComplete: () => setAnimating(false),
-          }
-        )
+          },
+        );
       },
-    })
+    });
   }
 
   function advance(dir) {
-    clearInterval(autoRef.current)
-    const next = (current + dir + TESTIMONIALS.length) % TESTIMONIALS.length
-    animateSlide(dir, next)
+    clearInterval(autoRef.current);
+    const next = (current + dir + TESTIMONIALS.length) % TESTIMONIALS.length;
+    animateSlide(dir, next);
   }
 
-  const t = TESTIMONIALS[current]
+  const t = TESTIMONIALS[current];
 
   return (
-    <section ref={sectionRef} className="section-padding bg-brand-950 relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="section-padding bg-brand-950 relative overflow-hidden"
+    >
       {/* Subtle texture */}
       <div className="absolute inset-0 dots opacity-[0.035] pointer-events-none" />
 
@@ -533,8 +591,10 @@ function TestimonialsSection() {
         {/* Header */}
         <div className="testimonial-header text-center mb-16">
           <span className="section-eyebrow text-brand-400">Client Voices</span>
-          <h2 className="font-display text-4xl lg:text-5xl font-bold text-white mt-1"
-              style={{ letterSpacing: '-0.02em', lineHeight: '1.1' }}>
+          <h2
+            className="font-display text-4xl lg:text-5xl font-bold text-white mt-1"
+            style={{ letterSpacing: "-0.02em", lineHeight: "1.1" }}
+          >
             What Our Clients Say
           </h2>
         </div>
@@ -544,13 +604,17 @@ function TestimonialsSection() {
           {/* Slide */}
           <div ref={slideRef} className="text-center">
             {/* Large quote mark */}
-            <div className="font-display text-8xl leading-none text-brand-700 mb-4 select-none"
-                 aria-hidden="true">"</div>
+            <div
+              className="font-display text-8xl leading-none text-brand-700 mb-4 select-none"
+              aria-hidden="true"
+            >
+              "
+            </div>
 
             {/* Quote */}
             <blockquote
               className="font-display text-xl sm:text-2xl text-white/90 italic mb-10"
-              style={{ lineHeight: '1.55', letterSpacing: '-0.01em' }}
+              style={{ lineHeight: "1.55", letterSpacing: "-0.01em" }}
             >
               {t.quote}
             </blockquote>
@@ -558,13 +622,21 @@ function TestimonialsSection() {
             {/* Attribution */}
             <div className="flex items-center justify-center gap-4">
               {/* Avatar initials */}
-              <div className="w-12 h-12 rounded-full bg-brand-700 border-2 border-brand-500
-                              flex items-center justify-center flex-shrink-0">
-                <span className="font-body font-semibold text-sm text-white">{t.initials}</span>
+              <div
+                className="w-12 h-12 rounded-full bg-brand-700 border-2 border-brand-500
+                              flex items-center justify-center flex-shrink-0"
+              >
+                <span className="font-body font-semibold text-sm text-white">
+                  {t.initials}
+                </span>
               </div>
               <div className="text-left">
-                <p className="font-body font-semibold text-white text-sm">{t.name}</p>
-                <p className="font-body text-brand-400 text-xs mt-0.5">{t.title}</p>
+                <p className="font-body font-semibold text-white text-sm">
+                  {t.name}
+                </p>
+                <p className="font-body text-brand-400 text-xs mt-0.5">
+                  {t.title}
+                </p>
               </div>
             </div>
           </div>
@@ -579,8 +651,14 @@ function TestimonialsSection() {
                          hover:border-brand-500 hover:text-white hover:bg-brand-700
                          flex items-center justify-center transition-all duration-200"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                <path d="M15 18l-6-6 6-6"/>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="w-4 h-4"
+              >
+                <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
 
@@ -589,10 +667,15 @@ function TestimonialsSection() {
               {TESTIMONIALS.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => { clearInterval(autoRef.current); animateSlide(i > current ? 1 : -1, i) }}
+                  onClick={() => {
+                    clearInterval(autoRef.current);
+                    animateSlide(i > current ? 1 : -1, i);
+                  }}
                   aria-label={`Testimonial ${i + 1}`}
                   className={`rounded-full transition-all duration-300 ${
-                    i === current ? 'w-6 h-2 bg-brand-500' : 'w-2 h-2 bg-white/25 hover:bg-white/50'
+                    i === current
+                      ? "w-6 h-2 bg-brand-500"
+                      : "w-2 h-2 bg-white/25 hover:bg-white/50"
                   }`}
                 />
               ))}
@@ -606,24 +689,36 @@ function TestimonialsSection() {
                          hover:border-brand-500 hover:text-white hover:bg-brand-700
                          flex items-center justify-center transition-all duration-200"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-                <path d="M9 18l6-6-6-6"/>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="w-4 h-4"
+              >
+                <path d="M9 18l6-6-6-6" />
               </svg>
             </button>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 /* ── Inline arrow icon ──────────────────────────────────────── */
 function ArrowRight({ className }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-      <path d="M5 12h14M12 5l7 7-7 7"/>
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+    >
+      <path d="M5 12h14M12 5l7 7-7 7" />
     </svg>
-  )
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -641,5 +736,5 @@ export default function Home() {
       <TestimonialsSection />
       <CTABanner />
     </>
-  )
+  );
 }

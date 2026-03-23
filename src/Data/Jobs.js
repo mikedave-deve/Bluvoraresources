@@ -1,5 +1,3 @@
-// src/data/jobs.js — Bluvora Resources job listings
-
 export const JOBS = [
   {
   id: 1,
