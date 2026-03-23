@@ -69,8 +69,8 @@ export default function BluvoraLogo({
         x="50"
         y="26"
         fontFamily="Syne, sans-serif"
-        fontWeight="800"
-        fontSize="30"
+        fontWeight="700"
+        fontSize="17"
         fill={text}
         letterSpacing="-0.3"
       >
@@ -80,8 +80,8 @@ export default function BluvoraLogo({
         x="50"
         y="36"
         fontFamily="Plus Jakarta Sans, sans-serif"
-        fontWeight="600"
-        fontSize="12"
+        fontWeight="500"
+        fontSize="8"
         fill={isWhite ? 'rgba(255,255,255,0.65)' : '#64748b'}
         letterSpacing="2"
       >
