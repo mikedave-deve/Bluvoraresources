@@ -1,26 +1,29 @@
 import { useRef } from 'react'
 import { gsap } from 'gsap'
+import CEO from '../assets/CEONELSONGONZALEZ.jpeg'
+import HIRINGMANAGER from "../assets/ANNGELIACRUZ.jpeg"
+import SUPERVISOR from "../assets/ROBERTLINDERMAN.jpeg"
 
 const STAFF = [
   {
-    name:        'Alexandra Mercer',
+    name:        'NELSON GONZALEZ',
     title:       'CEO & Founder',
     description: 'With 20+ years in executive search, Alexandra built Bluvora to bridge the gap between exceptional talent and transformational opportunities.',
-    image:       'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=600&q=80',
+    image:        CEO,
     linkedin:    '#',
   },
   {
-    name:        'Marcus Chen',
-    title:       'VP of Technology Staffing',
+    name:        'ANNGELIA CRUZ',
+    title:       'HIRING MANAGER',
     description: 'Former engineering lead turned recruiter, Marcus specializes in placing top-tier tech talent across Fortune 500 companies and high-growth startups.',
-    image:       'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',
+    image:       HIRINGMANAGER,
     linkedin:    '#',
   },
   {
     name:        'Priya Sharma',
     title:       'Director of Client Relations',
     description: 'Priya ensures every client partnership exceeds expectations, managing relationships with over 200 leading organizations across diverse industries.',
-    image:       'https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=600&q=80',
+    image:       SUPERVISOR,
     linkedin:    '#',
   },
 ]

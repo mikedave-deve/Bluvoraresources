@@ -102,7 +102,7 @@ function HeroCarousel() {
 
   return (
     <section
-      className="relative min-h-screen overflow-hidden"
+      className="relative  overflow-hidden"
       style={{ minHeight: "calc(100svh)" }}
     >
       {/* Slides */}
