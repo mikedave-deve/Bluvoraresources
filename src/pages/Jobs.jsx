@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import JobCard from "../components/JobCard";
-import { JOBS, CATEGORIES, TYPES, LOCATIONS } from "../data/jobs";
+import { JOBS, CATEGORIES, TYPES, LOCATIONS } from "../data/jobs.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
