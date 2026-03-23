@@ -104,7 +104,7 @@ function getCategoryIcon(category) {
     Marketing:       '',
     Healthcare:      '',
     Operations:      '',
-    Human Resources: '',
+    'Human Resources':'',
     Sales:           '',
     Engineering:     '',
   }
