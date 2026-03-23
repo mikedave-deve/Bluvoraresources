@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import StatsCounter from "../components/StatsCounter";
 import StaffSection from "../components/StaffSection";
 import JobCard from "../components/JobCard";
-import { JOBS } from "../data/jobs.js";
+import { JOBS } from "../data/jobs";
 
 gsap.registerPlugin(ScrollTrigger);
 
