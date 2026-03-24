@@ -6,6 +6,7 @@ import StatsCounter from "../components/StatsCounter";
 import StaffSection from "../components/StaffSection";
 import JobCard from "../components/JobCard";
 import { JOBS } from "../data/jobs";
+import RecognitionImg from "../assets/RecognitionImg.jpeg";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -471,6 +472,104 @@ function CTABanner() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   RecognitionSection
+═══════════════════════════════════════════════════════════════ */
+function RecognitionSection() {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".recognition-content",
+        { x: -40, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: { trigger: ref.current, start: "top 75%", once: true },
+        },
+      );
+
+      gsap.fromTo(
+        ".recognition-image",
+        { x: 40, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: 0.1,
+          scrollTrigger: { trigger: ref.current, start: "top 75%", once: true },
+        },
+      );
+    }, ref);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={ref} className="section-padding bg-surface-soft">
+      <div className="section-container">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+          {/* Left Content */}
+          <div className="recognition-content">
+            <span className="section-eyebrow">Employee Excellence</span>
+
+            <h2 className="section-title mt-1 mb-5">
+              Award-Winning{" "}
+              <span className="text-gradient-blue">Recognition Program</span>
+            </h2>
+
+            <p className="text-ink-muted leading-relaxed mb-5">
+              We proudly recognize and reward outstanding team members through
+              our award-winning employee recognition program. This initiative is
+              designed to identify individuals with exceptional potential and
+              performance.
+            </p>
+
+            <p className="text-ink-muted leading-relaxed mb-8">
+              Top performers gain access to career growth opportunities,
+              advancement pathways, and exclusive incentives — ensuring that
+              excellence is always seen, valued, and rewarded.
+            </p>
+
+            <div className="divider" />
+
+            <Link to="/submit-resume" className="btn-primary">
+              Join Our Team <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Right Image */}
+          <div className="recognition-image relative">
+            <img
+              src={RecognitionImg}
+              alt="Employee recognition and teamwork"
+              loading="lazy"
+              className="rounded-2xl object-cover w-full h-[420px] shadow-card"
+            />
+
+            {/* Floating badge */}
+            <div
+              className="absolute -bottom-4 left-6 bg-brand-700 text-white
+                         rounded-2xl px-5 py-4 shadow-blue-glow"
+            >
+              <p className="font-display font-bold text-2xl leading-none">
+                Top Talent
+              </p>
+              <p className="text-xs text-brand-200 mt-1">
+                Recognized & Rewarded
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    TestimonialsSection — auto-advancing GSAP carousel
 ═══════════════════════════════════════════════════════════════ */
 const TESTIMONIALS = [
@@ -479,35 +578,40 @@ const TESTIMONIALS = [
       "Bluvora placed me in my dream role within three weeks. Their team took the time to truly understand what I was looking for — not just the job title, but the culture and growth potential.",
     name: "Danielle Okafor",
     title: "Senior Product Manager, Nexlify Corp",
-    initials: "DO",
+    image:
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80",
   },
   {
     quote:
       "As a hiring manager, I’ve worked with many staffing firms. Bluvora stands apart — every candidate they sent was genuinely qualified and culturally aligned. We hired three through them in one quarter.",
     name: "James Whitfield",
     title: "VP of Engineering, BuildCo Infrastructure",
-    initials: "JW",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
   },
   {
     quote:
       "I was nervous about changing industries. The recruiter at Bluvora guided me through every step, coached me for interviews, and negotiated a salary 20% above what I expected.",
     name: "Sofia Reyes",
     title: "Financial Analyst, Summit Capital Group",
-    initials: "SR",
+    image:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80",
   },
   {
     quote:
       "The team is incredibly responsive and professional. They filled a critical ICU nursing role in under two weeks during our busiest season. We now use Bluvora exclusively.",
     name: "Dr. Marcus Webb",
     title: "Chief Nursing Officer, Greenfield Medical Center",
-    initials: "MW",
+    image:
+      "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&q=80",
   },
   {
     quote:
       "What sets Bluvora apart is the personal attention. I never felt like a number — they remembered details from our first call months later and kept checking in even after my placement.",
     name: "Priya Anand",
     title: "Marketing Director, BrightEdge Media",
-    initials: "PA",
+    image:
+      "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=80",
   },
 ];
 
@@ -622,13 +726,13 @@ function TestimonialsSection() {
             {/* Attribution */}
             <div className="flex items-center justify-center gap-4">
               {/* Avatar initials */}
-              <div
-                className="w-12 h-12 rounded-full bg-brand-700 border-2 border-brand-500
-                              flex items-center justify-center flex-shrink-0"
-              >
-                <span className="font-body font-semibold text-sm text-white">
-                  {t.initials}
-                </span>
+              <div className="w-12 h-12 rounded-full border-2 border-brand-500 overflow-hidden flex-shrink-0">
+                <img
+                  src={t.image}
+                  alt={t.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="text-left">
                 <p className="font-body font-semibold text-white text-sm">
@@ -733,6 +837,7 @@ export default function Home() {
       <StatsCounter />
       <AboutBanner />
       <StaffSection />
+      <RecognitionSection />
       <TestimonialsSection />
       <CTABanner />
     </>
