@@ -234,7 +234,7 @@ export default function SubmitResume() {
       formData.append('resume',    file)   // key must match upload.single('resume')
 
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/resume`,
+        `${import.meta.env.VITE_API_URL || 'https://bluvoraresources-backend.vercel.app'}/api/resume`,
         {
           method: 'POST',
           body:   formData,
