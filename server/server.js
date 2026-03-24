@@ -22,7 +22,7 @@ const isProd = process.env.NODE_ENV === 'production'
 //   ALLOWED_ORIGINS=https://bluvoraresources.com
 // Multiple origins: comma-separated
 //   ALLOWED_ORIGINS=https://bluvoraresources.com,https://www.bluvoraresources.com
-const rawOrigins     = process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000'
+const rawOrigins     = process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000,https://bluvoraresources.com'
 const allowedOrigins = rawOrigins.split(',').map(o => o.trim()).filter(Boolean)
 
 console.log('🌐  Allowed origins:', allowedOrigins)
