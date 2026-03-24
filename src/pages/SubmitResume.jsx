@@ -4,7 +4,7 @@ import { gsap } from 'gsap'
 
 /* ── Accepted file types ───────────────────────────────────── */
 const ACCEPT = '.pdf,.doc,.docx'
-const MAX_MB = 5
+const MAX_MB = 20
 
 /* ═══════════════════════════════════════════════════════════════
    DropZone
@@ -201,7 +201,8 @@ export default function SubmitResume() {
       setErrors(e => ({ ...e, file: `File must be under ${MAX_MB}MB` }))
       return
     }
-    setErrors(e => ({ ...e, file: undefined }))
+    // Clear any previous file error and accept the file
+    setErrors(e => { const next = { ...e }; delete next.file; return next })
     setFile(selected)
   }
 
@@ -215,8 +216,8 @@ export default function SubmitResume() {
     return e
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSubmit(evt) {
+    evt.preventDefault()
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
     setErrors({})
@@ -246,7 +247,10 @@ export default function SubmitResume() {
       if (!res.ok) {
         if (data.errors?.length) {
           const fieldErrors = {}
-          data.errors.forEach(({ field, message }) => { fieldErrors[field] = message })
+          data.errors.forEach(({ field, message }) => {
+            // Map backend field name "resume" → "file" for the dropzone error key
+            fieldErrors[field === 'resume' ? 'file' : field] = message
+          })
           setErrors(fieldErrors)
         } else {
           setErrors({ _server: data.message || 'Submission failed. Please try again.' })
