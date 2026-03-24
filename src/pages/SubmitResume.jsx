@@ -423,9 +423,9 @@ export default function SubmitResume() {
           {!success && (
             <div className="mt-10 grid grid-cols-3 gap-4 text-center">
               {[
-                { icon: '🔒', label: 'Secure & Private',   sub: 'Your data stays with us' },
-                { icon: '⚡', label: 'Fast Response',       sub: '2–3 business days' },
-                { icon: '🤝', label: 'Personal Review',     sub: 'Every resume is read' },
+                { icon: '', label: 'Secure & Private',   sub: 'Your data stays with us' },
+                { icon: '', label: 'Fast Response',       sub: '2–3 business days' },
+                { icon: '', label: 'Personal Review',     sub: 'Every resume is read' },
               ].map(({ icon, label, sub }) => (
                 <div key={label} className="bg-white rounded-2xl p-5 shadow-card">
                   <div className="text-2xl mb-2">{icon}</div>

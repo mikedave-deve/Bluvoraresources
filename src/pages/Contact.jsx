@@ -100,7 +100,7 @@ export default function Contact() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/contact`,
+        `${import.meta.env.VITE_API_URL || 'https://bluvoraresources-backend.vercel.app'}/api/contact`,
         {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
