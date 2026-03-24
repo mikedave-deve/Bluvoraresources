@@ -6,7 +6,7 @@ import StatsCounter from "../components/StatsCounter";
 import StaffSection from "../components/StaffSection";
 import JobCard from "../components/JobCard";
 import { JOBS } from "../data/jobs";
-import RecognitionImg from "../assets/RecognitionImg.jpeg";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -474,6 +474,9 @@ function CTABanner() {
 /* ═══════════════════════════════════════════════════════════════
    RecognitionSection
 ═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   RecognitionSection
+═══════════════════════════════════════════════════════════════ */
 function RecognitionSection() {
   const ref = useRef(null);
 
@@ -488,7 +491,7 @@ function RecognitionSection() {
           duration: 0.8,
           ease: "power3.out",
           scrollTrigger: { trigger: ref.current, start: "top 75%", once: true },
-        },
+        }
       );
 
       gsap.fromTo(
@@ -501,7 +504,7 @@ function RecognitionSection() {
           ease: "power3.out",
           delay: 0.1,
           scrollTrigger: { trigger: ref.current, start: "top 75%", once: true },
-        },
+        }
       );
     }, ref);
 
@@ -518,7 +521,9 @@ function RecognitionSection() {
 
             <h2 className="section-title mt-1 mb-5">
               Award-Winning{" "}
-              <span className="text-gradient-blue">Recognition Program</span>
+              <span className="text-gradient-blue">
+                Recognition Program
+              </span>
             </h2>
 
             <p className="text-ink-muted leading-relaxed mb-5">
@@ -544,7 +549,7 @@ function RecognitionSection() {
           {/* Right Image */}
           <div className="recognition-image relative">
             <img
-              src={RecognitionImg}
+              src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&q=80"
               alt="Employee recognition and teamwork"
               loading="lazy"
               className="rounded-2xl object-cover w-full h-[420px] shadow-card"
