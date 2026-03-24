@@ -28,7 +28,7 @@ app.use(
 
 // ── 3b. CORS ──────────────────────────────────────────────────
 // Parse comma-separated allowed origins from .env
-const rawOrigins    = process.env.ALLOWED_ORIGINS || 'http://localhost:5173,https://bluvoraresources.com'
+const rawOrigins    = process.env.ALLOWED_ORIGINS || 'http://localhost:5173'
 const allowedOrigins = rawOrigins.split(',').map(o => o.trim())
 
 app.use(
