@@ -1,107 +1,120 @@
-
+// server.js
 'use strict'
 
-// ── 1. Environment variables ──────────────────────────────────
 require('dotenv').config()
 
-const express     = require('express')
-const cors        = require('cors')
-const helmet      = require('helmet')
-const morgan      = require('morgan')
-const rateLimit   = require('express-rate-limit')
+const express   = require('express')
+const cors      = require('cors')
+const helmet    = require('helmet')
+const morgan    = require('morgan')
+const rateLimit = require('express-rate-limit')
 
-const { verifyMailer }  = require('./config/mailer')
-const contactRoutes     = require('./routes/contactRoutes')
-const resumeRoutes      = require('./routes/resumeRoutes')
+const { verifyMailer } = require('./config/mailer')
+const contactRoutes    = require('./routes/contactRoutes')
+const resumeRoutes     = require('./routes/resumeRoutes')
 
-// ── 2. App instance ───────────────────────────────────────────
-const app  = express()
-const PORT = parseInt(process.env.PORT || '5000', 10)
+const app    = express()
+const PORT   = parseInt(process.env.PORT || '5000', 10)
 const isProd = process.env.NODE_ENV === 'production'
 
-// ── 3a. Helmet — sets secure HTTP response headers ────────────
+// ── CORS origin list ──────────────────────────────────────────
+// Set ALLOWED_ORIGINS in your Vercel environment variables:
+//   ALLOWED_ORIGINS=https://bluvoraresources.com
+// Multiple origins: comma-separated
+//   ALLOWED_ORIGINS=https://bluvoraresources.com,https://www.bluvoraresources.com
+const rawOrigins     = process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000'
+const allowedOrigins = rawOrigins.split(',').map(o => o.trim()).filter(Boolean)
+
+console.log('🌐  Allowed origins:', allowedOrigins)
+
+const corsOptions = {
+  origin(origin, callback) {
+    // No origin = Postman / curl / server-to-server — always allow
+    if (!origin) return callback(null, true)
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+
+    // Return false (not an Error) so the response is still sent
+    // without the Access-Control-Allow-Origin header.
+    // Throwing an Error causes a 403 with NO CORS headers at all,
+    // which makes the browser report "CORS header missing" instead
+    // of showing the actual rejection — very confusing to debug.
+    console.warn(`🚫  CORS rejected origin: ${origin}`)
+    return callback(null, false)
+  },
+  methods:         ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders:  ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders:  ['Content-Length'],
+  credentials:     true,
+  maxAge:          86400, // cache preflight for 24h
+  optionsSuccessStatus: 204, // some browsers choke on 200 for OPTIONS
+}
+
+// ── STEP 1: Handle ALL preflight OPTIONS requests first ───────
+// This MUST come before helmet, rate-limiters, and routes.
+// Without this, OPTIONS hits the rate limiter or 404 handler
+// and returns without CORS headers — browser blocks everything.
+app.options('*', cors(corsOptions))
+
+// ── STEP 2: Apply CORS to all other requests ──────────────────
+app.use(cors(corsOptions))
+
+// ── Helmet ────────────────────────────────────────────────────
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
+    // Don't set these — they interfere with CORS on Vercel
+    crossOriginOpenerPolicy:   false,
   })
 )
 
-// ── 3b. CORS ──────────────────────────────────────────────────
-// Parse comma-separated allowed origins from .env
-const rawOrigins    = process.env.ALLOWED_ORIGINS || 'http://localhost:5173'
-const allowedOrigins = rawOrigins.split(',').map(o => o.trim())
-
-app.use(
-  cors({
-    origin(origin, callback) {
-      // Allow requests with no origin (Postman, curl, server-to-server)
-      if (!origin) return callback(null, true)
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true)
-      } else {
-        console.warn(`🚫  CORS blocked: ${origin}`)
-        callback(new Error(`CORS policy: origin ${origin} is not allowed.`))
-      }
-    },
-    methods:     ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-  })
-)
-
-// ── 3c. Global rate limiter ───────────────────────────────────
-// Protects ALL routes. Individual route limiters below are tighter.
+// ── Rate limiters ─────────────────────────────────────────────
 const globalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
   max:      parseInt(process.env.RATE_LIMIT_MAX        || '100',   10),
   standardHeaders: true,
   legacyHeaders:   false,
-  message: {
-    success: false,
-    message: 'Too many requests from this IP. Please wait a few minutes and try again.',
-  },
+  // Skip rate limiting for OPTIONS preflight requests
+  skip: (req) => req.method === 'OPTIONS',
+  message: { success: false, message: 'Too many requests. Please wait and try again.' },
 })
-app.use(globalLimiter)
 
-// ── 3d. Stricter limiter for form-submission routes ───────────
-// 10 submissions per 15 minutes per IP — prevents spam/abuse.
 const formLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max:      10,
   standardHeaders: true,
   legacyHeaders:   false,
-  message: {
-    success: false,
-    message: 'Too many form submissions. Please wait 15 minutes before trying again.',
-  },
+  skip: (req) => req.method === 'OPTIONS',
+  message: { success: false, message: 'Too many submissions. Please wait 15 minutes.' },
 })
 
-// ── 4. Logging ────────────────────────────────────────────────
-// 'combined' in production (Apache format), 'dev' elsewhere.
+app.use(globalLimiter)
+
+// ── Logging ───────────────────────────────────────────────────
 app.use(morgan(isProd ? 'combined' : 'dev'))
 
-// ── 5. Body parsers ───────────────────────────────────────────
-// JSON for the contact form (application/json from React)
+// ── Body parsers ──────────────────────────────────────────────
 app.use(express.json({ limit: '1mb' }))
-// URL-encoded for any HTML form fallbacks
 app.use(express.urlencoded({ extended: true, limit: '1mb' }))
 
-// ── 6. Health-check ───────────────────────────────────────────
+// ── Health check ──────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.status(200).json({
-    status:    'ok',
-    service:   'Bluvora Resources API',
-    timestamp: new Date().toISOString(),
-    env:       process.env.NODE_ENV,
+    status:         'ok',
+    service:        'Bluvora Resources API',
+    timestamp:      new Date().toISOString(),
+    env:            process.env.NODE_ENV,
+    allowedOrigins,
   })
 })
 
-// ── 7. API Routes ─────────────────────────────────────────────
+// ── API routes ────────────────────────────────────────────────
 app.use('/api/contact', formLimiter, contactRoutes)
 app.use('/api/resume',  formLimiter, resumeRoutes)
 
-// ── 8. 404 handler ────────────────────────────────────────────
+// ── 404 ───────────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -109,44 +122,36 @@ app.use((req, res) => {
   })
 })
 
-// ── 9. Global error handler ───────────────────────────────────
-// Catches any error thrown by middleware or route handlers.
+// ── Global error handler ──────────────────────────────────────
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  // CORS errors
-  if (err.message && err.message.startsWith('CORS policy')) {
-    return res.status(403).json({ success: false, message: err.message })
-  }
-
-  console.error('💥  Unhandled error:', err)
-
+  console.error('💥  Unhandled error:', err.message)
   res.status(err.status || 500).json({
     success: false,
-    message: isProd
-      ? 'An unexpected server error occurred. Please try again later.'
-      : err.message,
-    ...(isProd ? {} : { stack: err.stack }),
+    message: isProd ? 'An unexpected server error occurred.' : err.message,
   })
 })
 
-// ── 10. Start server ──────────────────────────────────────────
-async function start() {
-  // Verify mailer before accepting traffic
-  await verifyMailer()
-
-  app.listen(PORT, () => {
-    console.log('─'.repeat(52))
-    console.log(`🚀  Bluvora Resources API`)
-    console.log(`    Environment : ${process.env.NODE_ENV}`)
-    console.log(`    Port        : ${PORT}`)
-    console.log(`    CORS origins: ${allowedOrigins.join(', ')}`)
-    console.log('─'.repeat(52))
+// ── Start (skipped on Vercel — Vercel imports the module directly) ──
+if (process.env.VERCEL !== '1') {
+  async function start() {
+    await verifyMailer()
+    app.listen(PORT, () => {
+      console.log('─'.repeat(52))
+      console.log('🚀  Bluvora Resources API')
+      console.log(`    Environment : ${process.env.NODE_ENV}`)
+      console.log(`    Port        : ${PORT}`)
+      console.log(`    CORS origins: ${allowedOrigins.join(', ')}`)
+      console.log('─'.repeat(52))
+    })
+  }
+  start().catch(err => {
+    console.error('Failed to start server:', err)
+    process.exit(1)
   })
+} else {
+  // On Vercel: verify mailer once at cold start (non-blocking)
+  verifyMailer().catch(() => {})
 }
 
-start().catch(err => {
-  console.error('Failed to start server:', err)
-  process.exit(1)
-})
-
-module.exports = app // exported for testing
+module.exports = app
