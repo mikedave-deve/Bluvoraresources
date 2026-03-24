@@ -222,10 +222,44 @@ export default function SubmitResume() {
     setErrors({})
     setLoading(true)
 
-    /* Simulated API delay */
-    await new Promise(r => setTimeout(r, 1800))
-    setLoading(false)
-    setSuccess(true)
+    try {
+      // Build multipart/form-data — Multer expects the file under the "resume" field
+      const formData = new FormData()
+      formData.append('firstName', form.firstName)
+      formData.append('lastName',  form.lastName)
+      formData.append('email',     form.email)
+      formData.append('phone',     form.phone)
+      formData.append('category',  form.category)
+      formData.append('message',   form.message)
+      formData.append('resume',    file)   // key must match upload.single('resume')
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/resume`,
+        {
+          method: 'POST',
+          body:   formData,
+          // Do NOT set Content-Type — browser sets it with the boundary automatically
+        }
+      )
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (data.errors?.length) {
+          const fieldErrors = {}
+          data.errors.forEach(({ field, message }) => { fieldErrors[field] = message })
+          setErrors(fieldErrors)
+        } else {
+          setErrors({ _server: data.message || 'Submission failed. Please try again.' })
+        }
+        return
+      }
+
+      setSuccess(true)
+    } catch {
+      setErrors({ _server: 'Network error. Please check your connection and try again.' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleReset = () => {
@@ -348,6 +382,14 @@ export default function SubmitResume() {
                   />
                 </div>
 
+                {/* Server error banner */}
+                {errors._server && (
+                  <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3
+                                  text-sm text-red-700 font-medium mb-2">
+                    {errors._server}
+                  </div>
+                )}
+
                 {/* Submit */}
                 <button
                   type="submit"
@@ -381,9 +423,9 @@ export default function SubmitResume() {
           {!success && (
             <div className="mt-10 grid grid-cols-3 gap-4 text-center">
               {[
-                { icon: '', label: 'Secure & Private',   sub: 'Your data stays with us' },
-                { icon: '', label: 'Fast Response',       sub: '2–3 business days' },
-                { icon: '', label: 'Personal Review',     sub: 'Every resume is read' },
+                { icon: '🔒', label: 'Secure & Private',   sub: 'Your data stays with us' },
+                { icon: '⚡', label: 'Fast Response',       sub: '2–3 business days' },
+                { icon: '🤝', label: 'Personal Review',     sub: 'Every resume is read' },
               ].map(({ icon, label, sub }) => (
                 <div key={label} className="bg-white rounded-2xl p-5 shadow-card">
                   <div className="text-2xl mb-2">{icon}</div>

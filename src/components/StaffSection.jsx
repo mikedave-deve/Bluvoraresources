@@ -7,7 +7,7 @@ import SUPERVISOR from "../assets/ROBERTLINDERMAN.jpeg"
 const STAFF = [
   {
     name:        'NELSON GONZALEZ',
-    title:       'CEO & Founder',
+    title:       'CEO & FOUNDER',
     description: 'With 20+ years in executive search, Alexandra built Bluvora to bridge the gap between exceptional talent and transformational opportunities.',
     image:        CEO,
     linkedin:    '#',

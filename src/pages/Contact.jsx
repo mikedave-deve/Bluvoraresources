@@ -97,9 +97,36 @@ export default function Contact() {
     if (Object.keys(errs).length) { setErrors(errs); return }
     setErrors({})
     setLoading(true)
-    await new Promise(r => setTimeout(r, 1600))
-    setLoading(false)
-    setSent(true)
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/contact`,
+        {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(form),
+        }
+      )
+      const data = await res.json()
+
+      if (!res.ok) {
+        // Surface field-level errors from the server if present
+        if (data.errors?.length) {
+          const fieldErrors = {}
+          data.errors.forEach(({ field, message }) => { fieldErrors[field] = message })
+          setErrors(fieldErrors)
+        } else {
+          setErrors({ _server: data.message || 'Submission failed. Please try again.' })
+        }
+        return
+      }
+
+      setSent(true)
+    } catch {
+      setErrors({ _server: 'Network error. Please check your connection and try again.' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -324,6 +351,13 @@ export default function Contact() {
                         />
                         {errors.message && <p className="text-xs text-red-500 mt-1.5 font-medium">{errors.message}</p>}
                       </div>
+
+                      {errors._server && (
+                        <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3
+                                        text-sm text-red-700 font-medium">
+                          {errors._server}
+                        </div>
+                      )}
 
                       <button
                         type="submit"
