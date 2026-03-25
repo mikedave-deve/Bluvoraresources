@@ -5,6 +5,9 @@ const CONTACT_EMAIL = 'info@bluvoraresources.com'
 const CONTACT_PHONE = '+1 (800) 555-0199'
 const CONTACT_PHONE_RAW = '+18005550199'
 
+/* ── API base — strips any accidental trailing slash ─────── */
+const API_BASE = (import.meta.env.VITE_API_URL || 'https://bluvoraresources-backend-z3m8.vercel.app').replace(/\/+$/, '')
+
 const INFO_CARDS = [
   {
     icon: (
@@ -45,14 +48,12 @@ const INFO_CARDS = [
 
 export default function Contact() {
   const headerRef = useRef(null)
-  const cardsRef  = useRef(null)
   const formRef   = useRef(null)
   const [form, setForm]       = useState({ name: '', email: '', subject: '', message: '' })
   const [errors, setErrors]   = useState({})
   const [loading, setLoading] = useState(false)
   const [sent, setSent]       = useState(false)
 
-  /* Header animation */
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -64,7 +65,6 @@ export default function Contact() {
     return () => ctx.revert()
   }, [])
 
-  /* Cards + form entrance */
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -99,18 +99,14 @@ export default function Contact() {
     setLoading(true)
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL || 'https://bluvoraresources-backend.vercel.app'}/api/contact`,
-        {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify(form),
-        }
-      )
+      const res = await fetch(`${API_BASE}/api/contact`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(form),
+      })
       const data = await res.json()
 
       if (!res.ok) {
-        // Surface field-level errors from the server if present
         if (data.errors?.length) {
           const fieldErrors = {}
           data.errors.forEach(({ field, message }) => { fieldErrors[field] = message })
@@ -131,7 +127,6 @@ export default function Contact() {
 
   return (
     <>
-      {/* ── Hero ── */}
       <div ref={headerRef} className="bg-brand-950 pt-28 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 dots opacity-[0.04] pointer-events-none" />
         <div className="absolute inset-0 bg-mesh pointer-events-none" />
@@ -151,11 +146,9 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* ── Contact info cards ── */}
       <section className="section-padding bg-surface-soft">
         <div className="section-container">
 
-          {/* Info cards — clickable email + phone */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
             {INFO_CARDS.map(({ icon, label, value, href, note }) => (
               <a
@@ -184,10 +177,8 @@ export default function Contact() {
             ))}
           </div>
 
-          {/* ── Contact form + sidebar ── */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 max-w-6xl mx-auto">
 
-            {/* Sidebar */}
             <div className="lg:col-span-2 space-y-8">
               <div>
                 <span className="section-eyebrow block">Direct Contact</span>
@@ -200,15 +191,11 @@ export default function Contact() {
                 </p>
               </div>
 
-              {/* Prominent email CTA */}
               <div className="bg-white rounded-2xl shadow-card p-6 border border-slate-100">
                 <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted mb-3 font-body">
                   Email
                 </p>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="flex items-center gap-3 group"
-                >
+                <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-3 group">
                   <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center
                                   text-brand-700 group-hover:bg-brand-600 group-hover:text-white
                                   transition-all duration-200 flex-shrink-0">
@@ -225,15 +212,11 @@ export default function Contact() {
                 </a>
               </div>
 
-              {/* Prominent phone CTA */}
               <div className="bg-white rounded-2xl shadow-card p-6 border border-slate-100">
                 <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted mb-3 font-body">
                   Phone
                 </p>
-                <a
-                  href={`tel:${CONTACT_PHONE_RAW}`}
-                  className="flex items-center gap-3 group"
-                >
+                <a href={`tel:${CONTACT_PHONE_RAW}`} className="flex items-center gap-3 group">
                   <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center
                                   text-brand-700 group-hover:bg-brand-600 group-hover:text-white
                                   transition-all duration-200 flex-shrink-0">
@@ -252,7 +235,6 @@ export default function Contact() {
                 </p>
               </div>
 
-              {/* Hours note */}
               <div className="bg-brand-50 border border-brand-100 rounded-2xl p-6">
                 <p className="font-body text-sm text-ink-soft leading-relaxed">
                   <span className="font-semibold text-ink">Response time:</span> We
@@ -262,11 +244,9 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Form */}
             <div ref={formRef} className="lg:col-span-3">
               <div className="bg-white rounded-3xl shadow-card-hover p-8 lg:p-10">
                 {sent ? (
-                  /* Success state */
                   <div className="flex flex-col items-center text-center py-12">
                     <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-6">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
@@ -298,7 +278,6 @@ export default function Contact() {
 
                     <form onSubmit={handleSubmit} noValidate className="space-y-5">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        {/* Name */}
                         <div>
                           <label htmlFor="name" className="form-label">
                             Full Name <span className="text-red-500">*</span>
@@ -312,7 +291,6 @@ export default function Contact() {
                           {errors.name && <p className="text-xs text-red-500 mt-1.5 font-medium">{errors.name}</p>}
                         </div>
 
-                        {/* Email */}
                         <div>
                           <label htmlFor="email" className="form-label">
                             Email Address <span className="text-red-500">*</span>
@@ -327,7 +305,6 @@ export default function Contact() {
                         </div>
                       </div>
 
-                      {/* Subject */}
                       <div>
                         <label htmlFor="subject" className="form-label">Subject</label>
                         <input
@@ -338,7 +315,6 @@ export default function Contact() {
                         />
                       </div>
 
-                      {/* Message */}
                       <div>
                         <label htmlFor="message" className="form-label">
                           Message <span className="text-red-500">*</span>

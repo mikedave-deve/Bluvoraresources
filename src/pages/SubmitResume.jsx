@@ -6,6 +6,9 @@ import { gsap } from 'gsap'
 const ACCEPT = '.pdf,.doc,.docx'
 const MAX_MB = 20
 
+/* ── API base — strips any accidental trailing slash ─────── */
+const API_BASE = (import.meta.env.VITE_API_URL || 'https://bluvoraresources-backend-z3m8.vercel.app').replace(/\/+$/, '')
+
 /* ═══════════════════════════════════════════════════════════════
    DropZone
 ═══════════════════════════════════════════════════════════════ */
@@ -52,7 +55,6 @@ function DropZone({ file, onFile, error }) {
         />
 
         {file ? (
-          /* File selected */
           <div className="flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-emerald-600" />
@@ -70,7 +72,6 @@ function DropZone({ file, onFile, error }) {
             </button>
           </div>
         ) : (
-          /* Idle state */
           <div className="flex flex-col items-center gap-3">
             <div className={`w-14 h-14 rounded-full flex items-center justify-center
               ${dragging ? 'bg-brand-100' : 'bg-slate-100'}`}>
@@ -121,13 +122,11 @@ function SuccessScreen({ onReset }) {
 
   return (
     <div className="flex flex-col items-center text-center py-16 px-8">
-      {/* Animated check */}
       <div ref={circleRef} className="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center mb-8">
         <div ref={checkRef}>
           <CheckCircle className="w-12 h-12 text-emerald-500" />
         </div>
       </div>
-
       <div ref={textRef}>
         <h2 className="font-display text-3xl font-bold text-ink mb-3">
           Resume Submitted!
@@ -167,7 +166,6 @@ export default function SubmitResume() {
   const headerRef = useRef(null)
   const formRef   = useRef(null)
 
-  /* Header animation */
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -179,7 +177,6 @@ export default function SubmitResume() {
     return () => ctx.revert()
   }, [])
 
-  /* Form entrance */
   useEffect(() => {
     if (success) return
     const ctx = gsap.context(() => {
@@ -201,12 +198,10 @@ export default function SubmitResume() {
       setErrors(e => ({ ...e, file: `File must be under ${MAX_MB}MB` }))
       return
     }
-    // Clear any previous file error and accept the file
     setErrors(e => { const next = { ...e }; delete next.file; return next })
     setFile(selected)
   }
 
-  /* Validation */
   function validate() {
     const e = {}
     if (!form.firstName.trim())  e.firstName = 'First name is required'
@@ -224,7 +219,6 @@ export default function SubmitResume() {
     setLoading(true)
 
     try {
-      // Build multipart/form-data — Multer expects the file under the "resume" field
       const formData = new FormData()
       formData.append('firstName', form.firstName)
       formData.append('lastName',  form.lastName)
@@ -232,23 +226,18 @@ export default function SubmitResume() {
       formData.append('phone',     form.phone)
       formData.append('category',  form.category)
       formData.append('message',   form.message)
-      formData.append('resume',    file)   // key must match upload.single('resume')
+      formData.append('resume',    file)
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL || 'https://bluvoraresources-backend-z3m8.vercel.app/'}/api/resume`,
-        {
-          method: 'POST',
-          body:   formData,
-          // Do NOT set Content-Type — browser sets it with the boundary automatically
-        }
-      )
+      const res = await fetch(`${API_BASE}/api/resume`, {
+        method: 'POST',
+        body:   formData,
+      })
       const data = await res.json()
 
       if (!res.ok) {
         if (data.errors?.length) {
           const fieldErrors = {}
           data.errors.forEach(({ field, message }) => {
-            // Map backend field name "resume" → "file" for the dropzone error key
             fieldErrors[field === 'resume' ? 'file' : field] = message
           })
           setErrors(fieldErrors)
@@ -275,7 +264,6 @@ export default function SubmitResume() {
 
   return (
     <>
-      {/* ── Page Hero ── */}
       <div ref={headerRef} className="bg-gradient-to-br from-brand-900 to-brand-950 pt-28 pb-16 relative overflow-hidden">
         <div className="absolute inset-0 dots opacity-[0.04] pointer-events-none" />
         <div className="section-container relative z-10 text-center">
@@ -292,7 +280,6 @@ export default function SubmitResume() {
         </div>
       </div>
 
-      {/* ── Form section ── */}
       <section className="section-padding bg-surface-soft">
         <div className="section-container max-w-3xl">
           <div ref={formRef} className="bg-white rounded-3xl shadow-card-hover overflow-hidden">
@@ -308,7 +295,6 @@ export default function SubmitResume() {
                   Fields marked <span className="text-red-500">*</span> are required.
                 </p>
 
-                {/* Name row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                   <FormField
                     label="First Name" required
@@ -324,7 +310,6 @@ export default function SubmitResume() {
                   />
                 </div>
 
-                {/* Email + Phone */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                   <FormField
                     label="Email Address" required type="email"
@@ -340,11 +325,8 @@ export default function SubmitResume() {
                   />
                 </div>
 
-                {/* Category */}
                 <div className="mb-5">
-                  <label className="form-label">
-                    Industry / Category
-                  </label>
+                  <label className="form-label">Industry / Category</label>
                   <div className="relative">
                     <select
                       name="category"
@@ -362,7 +344,6 @@ export default function SubmitResume() {
                   </div>
                 </div>
 
-                {/* Resume upload */}
                 <div className="mb-5">
                   <label className="form-label">
                     Resume / CV <span className="text-red-500">*</span>
@@ -370,7 +351,6 @@ export default function SubmitResume() {
                   <DropZone file={file} onFile={handleFile} error={errors.file} />
                 </div>
 
-                {/* Message */}
                 <div className="mb-8">
                   <label className="form-label" htmlFor="message">
                     Cover Note <span className="text-ink-subtle font-normal">(optional)</span>
@@ -386,7 +366,6 @@ export default function SubmitResume() {
                   />
                 </div>
 
-                {/* Server error banner */}
                 {errors._server && (
                   <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3
                                   text-sm text-red-700 font-medium mb-2">
@@ -394,7 +373,6 @@ export default function SubmitResume() {
                   </div>
                 )}
 
-                {/* Submit */}
                 <button
                   type="submit"
                   disabled={loading}
@@ -423,7 +401,6 @@ export default function SubmitResume() {
             )}
           </div>
 
-          {/* Trust badges */}
           {!success && (
             <div className="mt-10 grid grid-cols-3 gap-4 text-center">
               {[
