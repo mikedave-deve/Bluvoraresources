@@ -68,7 +68,7 @@ export default function Footer() {
                 info@bluvoraresources.com
               </a>
               <a
-                href="tel:+18005550199"
+                href="tel:+17123266711"
                 className="flex items-center gap-2.5 text-sm text-white/65 hover:text-white
                            transition-colors duration-150 group"
               >
@@ -78,7 +78,7 @@ export default function Footer() {
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
                   </svg>
                 </span>
-                +1 (800) 555-0199
+                +1 (712) 326-6711
               </a>
             </div>
 
