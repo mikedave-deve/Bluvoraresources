@@ -7,7 +7,6 @@ const NAV_LINKS = [
   { label: 'Home',          to: '/' },
   { label: 'Jobs',          to: '/jobs' },
   { label: 'About',         to: '/about' },
-  { label: 'Submit Resume', to: '/submit-resume' },
   { label: 'Contact',       to: '/contact' },
 ]
 
@@ -107,8 +106,8 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link to="/jobs" className={transparent ? 'btn-white' : 'btn-primary'}>
-              Find Jobs
+            <Link to="/submit-resume" className={transparent ? 'btn-white' : 'btn-primary'}>
+              Submit Resume
             </Link>
           </div>
 
