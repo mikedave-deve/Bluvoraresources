@@ -11,6 +11,11 @@ const NAV_LINKS = [
   { label: 'Contact',       to: '/contact' },
 ]
 
+// Mobile-only additional links
+const MOBILE_EXTRA_LINKS = [
+  { label: 'Apply Now', to: '/apply-now' },
+]
+
 export default function Navbar() {
   const [scrolled,  setScrolled]  = useState(false)
   const [menuOpen,  setMenuOpen]  = useState(false)
@@ -138,6 +143,21 @@ export default function Navbar() {
               key={to}
               to={to}
               end={to === '/'}
+              className={({ isActive }) =>
+                `px-4 py-3 text-sm font-semibold rounded-xl transition-colors duration-150 ${
+                  isActive
+                    ? 'bg-brand-50 text-brand-700'
+                    : 'text-ink-soft hover:bg-surface-muted hover:text-ink'
+                }`
+              }
+            >
+              {label}
+            </NavLink>
+          ))}
+          {MOBILE_EXTRA_LINKS.map(({ label, to }) => (
+            <NavLink
+              key={to}
+              to={to}
               className={({ isActive }) =>
                 `px-4 py-3 text-sm font-semibold rounded-xl transition-colors duration-150 ${
                   isActive

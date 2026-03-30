@@ -10,6 +10,7 @@ const Jobs          = lazy(() => import('./pages/Jobs'))
 const SubmitResume  = lazy(() => import('./pages/SubmitResume'))
 const About         = lazy(() => import('./pages/About'))
 const Contact       = lazy(() => import('./pages/Contact'))
+const ApplyNow      = lazy(() => import('./pages/ApplyNow'))
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/submit-resume" element={<SubmitResume />} />
             <Route path="/about"         element={<About />} />
             <Route path="/contact"        element={<Contact />} />
+            <Route path="/apply-now"      element={<ApplyNow />} />
           </Routes>
         </Suspense>
       </main>

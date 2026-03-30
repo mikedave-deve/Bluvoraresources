@@ -733,7 +733,7 @@ function TestimonialsSection() {
               {/* Avatar initials */}
               <div className="w-12 h-12 rounded-full border-2 border-brand-500 overflow-hidden flex-shrink-0">
                 <img
-                  src={t.image}
+                  src={t.initial}
                   alt={t.name}
                   loading="lazy"
                   className="w-full h-full object-cover"
