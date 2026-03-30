@@ -138,7 +138,7 @@ function StaffCard({ person }) {
 }
 
 function EmployeeOfTheMonth() {
-  const employee = STAFF[2]; // CORY GUINTA — Admin Assistant
+  const employee = STAFF[4]; // CORY GUINTA — Admin Assistant
   const ceo = STAFF[0]; // NELSON GONZALEZ
 
   return (
