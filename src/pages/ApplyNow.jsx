@@ -169,8 +169,37 @@ export default function ApplyNow() {
     setLoading(true)
 
     try {
-      // Simulate API call — replace with real endpoint when available
-      await new Promise(resolve => setTimeout(resolve, 1200))
+      const res = await fetch(`${API_BASE}/api/apply`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName:       form.fullName,
+          email:          form.email,
+          phone:          form.phone,
+          dob:            form.dob,
+          address:        form.address,
+          position:       form.position,
+          availability:   form.availability,
+          workDuration:   form.workDuration,
+          additionalInfo: form.additionalInfo,
+          message:        form.message,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        // Surface per-field server validation errors if returned
+        if (data.errors && Array.isArray(data.errors)) {
+          const fieldErrors = {}
+          data.errors.forEach(e => { fieldErrors[e.field] = e.message })
+          setErrors(fieldErrors)
+        } else {
+          setErrors({ _server: data.message || 'Something went wrong. Please try again.' })
+        }
+        return
+      }
+
       setSuccess(true)
     } catch {
       setErrors({ _server: 'Network error. Please check your connection and try again.' })
@@ -426,9 +455,9 @@ export default function ApplyNow() {
           {!success && (
             <div className="mt-10 grid grid-cols-3 gap-4 text-center">
               {[
-                { icon: '', label: 'Secure & Private',  sub: 'Your data stays with us' },
-                { icon: '', label: 'Fast Response',      sub: '2–3 business days' },
-                { icon: '', label: 'Personal Review',    sub: 'Every application is read' },
+                { icon: '🔒', label: 'Secure & Private',  sub: 'Your data stays with us' },
+                { icon: '⚡', label: 'Fast Response',      sub: '2–3 business days' },
+                { icon: '👤', label: 'Personal Review',    sub: 'Every application is read' },
               ].map(({ icon, label, sub }) => (
                 <div key={label} className="bg-white rounded-2xl p-5 shadow-card">
                   <div className="text-2xl mb-2">{icon}</div>
