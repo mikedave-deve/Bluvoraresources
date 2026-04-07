@@ -40,9 +40,9 @@ const INFO_CARDS = [
       </svg>
     ),
     label: 'Our Office',
-    value: '200 W Monroe St, Suite 1800',
+    value: '477 Madison Ave, New York,',
     href:  'https://maps.google.com/?q=200+W+Monroe+St+Chicago+IL',
-    note:  'Chicago, IL 60606',
+    note:  'NY 10022, USA',
   },
 ]
 
