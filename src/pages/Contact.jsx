@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 
 const CONTACT_EMAIL = 'info@bluvoraresources.com'
-const CONTACT_PHONE = '+1 (616) 256-7455'
-const CONTACT_PHONE_RAW = '+16162567455'
+const CONTACT_PHONE = '+1 (504) 513-1640'
+const CONTACT_PHONE_RAW = '+504 513-1640'
 
 /* ── API base — strips any accidental trailing slash ─────── */
 const API_BASE = (import.meta.env.VITE_API_URL || 'https://bluvoraresources-backend-z3m8.vercel.app').replace(/\/+$/, '')
